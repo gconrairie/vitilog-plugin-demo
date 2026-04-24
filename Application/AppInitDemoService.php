@@ -79,7 +79,6 @@ class AppInitDemoService extends AbstractConsoleCommandService
                 nom: 'Demo',
                 prenom: 'Admin',
                 societe: 'Vitilog',
-                telephone: '0658008765',
                 password: 'demo',
             );
             $user = $this->createUserHandler->handle(
