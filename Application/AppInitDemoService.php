@@ -6,6 +6,7 @@ use App\Core\Console\AbstractConsoleCommandService;
 use App\Modules\Cave\Application\Write\Dto\CaveWriteDto;
 use App\Modules\Cave\Application\Write\Handler\CreateCaveHandler;
 use App\Modules\Cave\Domain\Cave;
+use App\Modules\Plugin\Application\PluginManager\Write\Handler\SyncPluginsHandler;
 use App\Modules\Plugin\Domain\CavePlugin;
 use App\Modules\Plugin\Infrastructure\Repository\PluginRepository;
 use App\Modules\User\Application\User\Write\Dto\UserWriteDto;
@@ -22,8 +23,8 @@ class AppInitDemoService extends AbstractConsoleCommandService
         private readonly CreateUserHandler $createUserHandler,
         private readonly CreateCaveHandler $createCaveHandler,
         private readonly PluginRepository $pluginRepository,
-    ) {
-    }
+        private readonly SyncPluginsHandler $syncPluginsHandler,
+    ) {}
 
     public function init(SymfonyStyle $io)
     {
@@ -31,6 +32,12 @@ class AppInitDemoService extends AbstractConsoleCommandService
         $cave = $this->createDemoCave();
         $this->createDemoAdmin($cave);
         $this->activatePluginsForCave($cave);
+    }
+
+    private function syncPlugins(): void
+    {
+        $this->setTitle('Syncing Plugins');
+        $this->syncPluginsHandler->handle();
     }
 
     private function createDemoCave(): Cave
@@ -98,7 +105,7 @@ class AppInitDemoService extends AbstractConsoleCommandService
             if (!$plugin->isInstalled()) {
                 continue;
             }
-            $this->setLine('Plugin '.$plugin->getName().' activated', true);
+            $this->setLine('Plugin ' . $plugin->getName() . ' activated', true);
 
             // Create cave plugin entity
             $cavePlugin = $this->em->getRepository(CavePlugin::class)->findOneBy(['cave' => $cave, 'plugin' => $plugin]);
@@ -113,7 +120,7 @@ class AppInitDemoService extends AbstractConsoleCommandService
             $cavePlugin->setEnabled(true);
             $this->em->persist($cavePlugin);
             $this->em->flush();
-            $this->setLine('Plugin '.$plugin->getName().' activated for demo cave', true);
+            $this->setLine('Plugin ' . $plugin->getName() . ' activated for demo cave', true);
         }
     }
 }
