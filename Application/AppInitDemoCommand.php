@@ -2,7 +2,7 @@
 
 namespace App\Plugins\Demo\Application;
 
-use App\Modules\Settings\Application\CheckConfigService;
+use App\Core\Installer\Application\Read\CheckConfigHandler;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +17,7 @@ class AppInitDemoCommand extends Command
 {
     public function __construct(
         private readonly AppInitDemoService $appInitDemoService,
-        private readonly CheckConfigService $checkConfigService,
+        private readonly CheckConfigHandler $checkConfigHandler,
     ) {
         parent::__construct();
     }
@@ -30,11 +30,12 @@ class AppInitDemoCommand extends Command
         $this->appInitDemoService->init($io);
 
         // Check config
-        $response = $this->checkConfigService->run($io);
-        if ($this->checkConfigService->hasErrors()) {
-            $io->error('The configuration has errors');
-
-            return Command::FAILURE;
+        $response = $this->checkConfigHandler->handle();
+        foreach ($response['env'] as $key => $value) {
+            $io->writeln($key . ': ' . ($value ? '✅' : '❌'));
+        }
+        foreach ($response['adminOptions'] as $key => $value) {
+            $io->writeln($key . ': ' . ($value ? '✅' : '❌'));
         }
 
         return Command::SUCCESS;

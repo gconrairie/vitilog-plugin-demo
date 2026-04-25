@@ -2,7 +2,7 @@
 
 namespace App\Plugins\Demo\Application;
 
-use App\Core\Console\AbstractConsoleCommandService;
+use App\Core\Console\ConsoleCommandStyleTrait;
 use App\Modules\Cave\Application\Write\Dto\CaveWriteDto;
 use App\Modules\Cave\Application\Write\Handler\CreateCaveHandler;
 use App\Modules\Cave\Domain\Cave;
@@ -16,15 +16,18 @@ use App\Shared\Security\ActorContext;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class AppInitDemoService extends AbstractConsoleCommandService
+class AppInitDemoService
 {
+    use ConsoleCommandStyleTrait;
+
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly CreateUserHandler $createUserHandler,
         private readonly CreateCaveHandler $createCaveHandler,
         private readonly PluginRepository $pluginRepository,
         private readonly SyncPluginsHandler $syncPluginsHandler,
-    ) {}
+    ) {
+    }
 
     public function init(SymfonyStyle $io)
     {
@@ -104,7 +107,7 @@ class AppInitDemoService extends AbstractConsoleCommandService
             if (!$plugin->isInstalled()) {
                 continue;
             }
-            $this->setLine('Plugin ' . $plugin->getName() . ' activated', true);
+            $this->setLine('Plugin '.$plugin->getName().' activated', true);
 
             // Create cave plugin entity
             $cavePlugin = $this->em->getRepository(CavePlugin::class)->findOneBy(['cave' => $cave, 'plugin' => $plugin]);
@@ -119,7 +122,7 @@ class AppInitDemoService extends AbstractConsoleCommandService
             $cavePlugin->setEnabled(true);
             $this->em->persist($cavePlugin);
             $this->em->flush();
-            $this->setLine('Plugin ' . $plugin->getName() . ' activated for demo cave', true);
+            $this->setLine('Plugin '.$plugin->getName().' activated for demo cave', true);
         }
     }
 }
