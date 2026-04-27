@@ -32,10 +32,10 @@ class AppInitDemoCommand extends Command
         // Check config
         $response = $this->checkConfigHandler->handle();
         foreach ($response['env'] as $key => $value) {
-            $io->writeln($key . ': ' . ($value ? '✅' : '❌'));
+            $io->writeln($key.': '.($value ? '✅' : '❌'));
         }
         foreach ($response['adminOptions'] as $key => $value) {
-            $io->writeln($key . ': ' . ($value ? '✅' : '❌'));
+            $io->writeln($key.': '.($value ? '✅' : '❌'));
         }
 
         return Command::SUCCESS;

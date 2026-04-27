@@ -2,7 +2,6 @@
 
 namespace App\Plugins\Demo\Application;
 
-use App\Core\Console\ConsoleCommandStyleTrait;
 use App\Modules\Cave\Application\Write\Dto\CaveWriteDto;
 use App\Modules\Cave\Application\Write\Handler\CreateCaveHandler;
 use App\Modules\Cave\Domain\Cave;
@@ -13,6 +12,7 @@ use App\Modules\User\Application\User\Write\Dto\UserWriteDto;
 use App\Modules\User\Application\User\Write\Handler\CreateUserHandler;
 use App\Modules\User\Domain\User;
 use App\Shared\Security\ActorContext;
+use App\Shared\Trait\ConsoleCommandStyleTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -26,8 +26,7 @@ class AppInitDemoService
         private readonly CreateCaveHandler $createCaveHandler,
         private readonly PluginRepository $pluginRepository,
         private readonly SyncPluginsHandler $syncPluginsHandler,
-    ) {
-    }
+    ) {}
 
     public function init(SymfonyStyle $io)
     {
@@ -107,7 +106,7 @@ class AppInitDemoService
             if (!$plugin->isInstalled()) {
                 continue;
             }
-            $this->setLine('Plugin '.$plugin->getName().' activated', true);
+            $this->setLine('Plugin ' . $plugin->getName() . ' activated', true);
 
             // Create cave plugin entity
             $cavePlugin = $this->em->getRepository(CavePlugin::class)->findOneBy(['cave' => $cave, 'plugin' => $plugin]);
@@ -122,7 +121,7 @@ class AppInitDemoService
             $cavePlugin->setEnabled(true);
             $this->em->persist($cavePlugin);
             $this->em->flush();
-            $this->setLine('Plugin '.$plugin->getName().' activated for demo cave', true);
+            $this->setLine('Plugin ' . $plugin->getName() . ' activated for demo cave', true);
         }
     }
 }
